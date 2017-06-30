@@ -26,18 +26,23 @@ public class AppConfiguration {
     let mapManager = ConfigurationManager()
 
     let mappingFile = "mapping.json"
-    let mappingFilePath = "../../config/mapping.json"
+    let mappingFilePath = "config/mapping.json"
 
     public init () {
 
         HeliumLogger.use(LoggerMessageType.info)
 
-        let filePath = URL(fileURLWithPath: #file).appendingPathComponent(mappingFilePath).standardized
+        // For local mapping file
+        mapManager.load(file: mappingFilePath, relativeFrom: .project)
 
-        mapManager.load(url: filePath)
+        // For CF
         mapManager.load(file: mappingFile, relativeFrom: .pwd)
 
     }
+
+    // make internal method/constructor that are only visible to test cases--loading mapping.json, env vars
+
+    // add test cases for local and Kube
 
     public func getCredentials(name: String) -> [String:Any]? {
 
@@ -66,7 +71,7 @@ public class AppConfiguration {
                 }
                 break
             case "env":             // Kubernetes
-                if let credentials = getKubeCreds(name: value) {
+                if let credentials = getKubeCreds(evName: value) {
                     return credentials
                 }
                 break
@@ -99,12 +104,13 @@ public class AppConfiguration {
         return credentials
     }
 
-    private func getKubeCreds(name: String) -> [String:Any]? {
+    private func getKubeCreds(evName: String) -> [String:Any]? {
 
         let kubeManager = ConfigurationManager()
         kubeManager.load(.environmentVariables)
 
-        guard let credentials = kubeManager["\(name)"] as? [String: Any] else {
+        // ask ylin about how to set evs for test cases
+        guard let credentials = kubeManager["\(evName)"] as? [String: Any] else {
             Log.info("*** KUBE FAIL *** ")
             return nil
         }
@@ -116,16 +122,15 @@ public class AppConfiguration {
 
         let fileManager = ConfigurationManager()
 
-        // Load local file
-        let filePath = URL(fileURLWithPath: #file).appendingPathComponent(path).standardized
-        fileManager.load(url: filePath)
+        // For local mapping file
+        fileManager.load(file: path, relativeFrom: .project)
 
         // Load file in cloud foundry-- extract filename from path
         if let fileName = path.components(separatedBy: "/").last {
             fileManager.load(file: fileName, relativeFrom: .pwd)
         }
-        
-        guard let credentials = fileManager.getServiceCreds(spec: instance) else {
+
+        guard let credentials = fileManager["\(instance)"] as? [String: Any] else {
             print("LOCAL CREDS FAIL")
             return nil
         }

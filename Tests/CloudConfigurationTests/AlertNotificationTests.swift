@@ -30,7 +30,7 @@ class AlertNotificationTests: XCTestCase {
 
         let manager = AppConfiguration()
 
-        guard let credentials =  manager.getAlertNotificationCredentials(name: "AlertNotificationService") else {
+        guard let credentials =  manager.getAlertNotificationCredentials(name: "AlertNotificationKey") else {
             XCTFail("Could not load Alert Notification service credentials.")
             return
         }

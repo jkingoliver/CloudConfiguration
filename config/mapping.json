@@ -1,8 +1,8 @@
 {
-  "AlertNotificationService": {
+  "AlertNotificationKey": {
     "searchPatterns": [
-      "file:../../Tests/CloudConfigurationTests/config_example.json",
-      "env:kubeEV",
+      "file:Tests/CloudConfigurationTests/config_with_key.json:alertnotification2",
+      "env:kubeEVWrong",
       "cloudfoundry:my-cloudant-instance-1"
     ]
   },
