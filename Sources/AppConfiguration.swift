@@ -37,6 +37,7 @@ public class AppConfiguration {
 
         // For Cloud Foundry
         mapManager.load(file: mappingFile, relativeFrom: .pwd)
+        mapManager.load(file: "config/\(mappingFile)", relativeFrom: .pwd)
 
     }
 
@@ -55,6 +56,8 @@ public class AppConfiguration {
 
             let key = arr.removeFirst()
             let value = arr.removeFirst()
+
+            Log.info("*** Key: \(key) and Value: \(value) *** ")
 
             switch (key) {
             case "cloudfoundry":    // CloudFoundry/swift-cfenv
@@ -88,9 +91,11 @@ public class AppConfiguration {
         cloudFoundryManager.load(.environmentVariables)
 
         guard let credentials = cloudFoundryManager.getServiceCreds(spec: name) else {
-            print("CLOUD FOUNDRY FAIL")
+            Log.info("CLOUD FOUNDRY FAIL")
             return nil
         }
+
+        Log.info(" *** GOT CREDS \(credentials)")
 
         return credentials
     }
