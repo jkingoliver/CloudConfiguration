@@ -18,9 +18,9 @@ import XCTest
 import Configuration
 @testable import CloudConfiguration
 
-class AlertNotificationTests: XCTestCase {
+class EnvironmentVariablesTests: XCTestCase {
 
-    static var allTests : [(String, (AlertNotificationTests) -> () throws -> Void)] {
+    static var allTests : [(String, (EnvironmentVariablesTests) -> () throws -> Void)] {
         return [
             ("testGetCredentials", testGetCredentials),
         ]
@@ -33,10 +33,12 @@ class AlertNotificationTests: XCTestCase {
         // Load test mapping.json file
         manager.loadMappingTestConfigs(path: "Tests/ConfigTests/mapping.json")
 
-        // Load Cloud Foundry test credentials-- VCAP_SERVICES and VCAP_APPLICATION 
-        manager.loadCFTestConfigs(path: "Tests/ConfigTests/config_cf_example.json")
+        let jsonString = "{\"name\":\"21a084f4-4eb3-4de4-9834-33bdc7be5df9/d2a85740-da7a-4615-aabf-5bdc35c63618\",\"password\":\"alertnotification-pwd\",\"url\":\"https://ibmnotifybm.mybluemix.net/api/alerts/v1\",\"swaggerui\":\"https://ibmnotifybm.mybluemix.net/docs/alerts/v1\"}"
 
-        guard let credentials =  manager.getAlertNotificationCredentials(name: "AlertNotificationKey") else {
+        // Set env var
+        XCTAssertEqual(setenv("KUBE_ENV", jsonString, 1), 0)
+
+        guard let credentials =  manager.getAlertNotificationCredentials(name: "AlertNotificationEVKey") else {
             XCTFail("Could not load Alert Notification service credentials.")
             return
         }
@@ -46,6 +48,8 @@ class AlertNotificationTests: XCTestCase {
         XCTAssertEqual(credentials.password, "alertnotification-pwd", "Alert Notification Service password should match.")
         XCTAssertEqual(credentials.swaggerUI, "https://ibmnotifybm.mybluemix.net/docs/alerts/v1", "Alert Notification Service swaggerUI should match.")
 
+        // Unset env var
+        XCTAssertEqual(unsetenv("KUBE_ENV"), 0)
     }
 }
 

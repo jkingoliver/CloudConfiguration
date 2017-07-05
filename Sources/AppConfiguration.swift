@@ -23,26 +23,22 @@ import LoggerAPI
 
 public class AppConfiguration {
 
+    let cloudFoundryManager = ConfigurationManager()
     let mapManager = ConfigurationManager()
-
-    let mappingFile = "mapping.json"
-    let mappingFilePath = "config/mapping.json"
 
     public init () {
 
         HeliumLogger.use(LoggerMessageType.info)
 
-        // For local mapping file
-        mapManager.load(file: mappingFilePath, relativeFrom: .project)
+        let mappingFile = "mapping.json"
 
-        // For CF
+        // For local mapping file
+        mapManager.load(file: "config/\(mappingFile)", relativeFrom: .project)
+
+        // For Cloud Foundry
         mapManager.load(file: mappingFile, relativeFrom: .pwd)
 
     }
-
-    // make internal method/constructor that are only visible to test cases--loading mapping.json, env vars
-
-    // add test cases for local and Kube
 
     public func getCredentials(name: String) -> [String:Any]? {
 
@@ -55,10 +51,6 @@ public class AppConfiguration {
 
         for pattern in searchPatterns {
 
-            //Possible patterns:
-            // "file:"
-            // "file:/local-development-credentials.json"
-            // "file:/local-development-credentials.json:my-cloudant-credentials"
             var arr = pattern.components(separatedBy: ":")
 
             let key = arr.removeFirst()
@@ -76,7 +68,7 @@ public class AppConfiguration {
                 }
                 break
             case "file":            // File- local or in cloud foundry
-                let instance = (arr.count > 0) ? arr[0] : name
+                let instance = (arr.count > 0) ? arr[0] : ""
 
                 if let credentials = getLocalCreds(instance: instance, path: value) {
                     return credentials
@@ -93,10 +85,9 @@ public class AppConfiguration {
 
     private func getCloudFoundryCreds(name: String) -> [String:Any]? {
 
-        let cfManager = ConfigurationManager()
-        cfManager.load(.environmentVariables)
+        cloudFoundryManager.load(.environmentVariables)
 
-        guard let credentials = cfManager.getServiceCreds(spec: name) else {
+        guard let credentials = cloudFoundryManager.getServiceCreds(spec: name) else {
             print("CLOUD FOUNDRY FAIL")
             return nil
         }
@@ -109,7 +100,6 @@ public class AppConfiguration {
         let kubeManager = ConfigurationManager()
         kubeManager.load(.environmentVariables)
 
-        // ask ylin about how to set evs for test cases
         guard let credentials = kubeManager["\(evName)"] as? [String: Any] else {
             Log.info("*** KUBE FAIL *** ")
             return nil
@@ -130,12 +120,29 @@ public class AppConfiguration {
             fileManager.load(file: fileName, relativeFrom: .pwd)
         }
 
-        guard let credentials = fileManager["\(instance)"] as? [String: Any] else {
-            print("LOCAL CREDS FAIL")
-            return nil
+        var credentials: [String: Any]?
+
+        if instance == "" {
+            credentials = (fileManager.getConfigs() as? [String: Any])
         }
-        
+        else {
+            credentials = fileManager["\(instance)"] as? [String: Any]
+        }
         return credentials
+    }
+
+    // Used internally for testing purposes
+    internal func loadCFTestConfigs(path: String) {
+
+        cloudFoundryManager.load(file: path, relativeFrom: .project)
+        
+    }
+
+    // Used internally for testing purposes
+    internal func loadMappingTestConfigs(path: String) {
+
+        mapManager.load(file: path, relativeFrom: .project)
+
     }
 }
 
