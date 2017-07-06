@@ -1,16 +1,17 @@
 {
   "AlertNotificationKey": {
     "searchPatterns": [
-      "cloudfoundry:AlertNotificationService",
-      "env:kubeEVWrong",
-      "file:Tests/CloudConfigurationTests/config_with_keyWRONG.json"
+      "file:Tests/CloudConfigurationTests/INVALID.json",
+      "env:kubeEVINVALID",
+      "cloudfoundry:AlertNotificationService"
+      
     ]
   },
   "AlertNotificationEVKey": {
     "searchPatterns": [
-      "env:KUBE_ENV",
-      "file:Tests/CloudConfigurationTests/config_with_keyWRONG.json",
-      "cloudfoundry:my-cloudant-instance-1"
+      "file:Tests/CloudConfigurationTests/INVALID.json",
+      "cloudfoundry:my-cloudant-instance-1",
+      "env:KUBE_ENV"
     ]
   },
   "AlertNotificationFileNoKey": {
@@ -31,91 +32,91 @@
     "searchPatterns": [
       "cloudfoundry:CloudantService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "PushNotificationKey": {
     "searchPatterns": [
       "cloudfoundry:PushNotificationService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "ConversationKey": {
     "searchPatterns": [
       "cloudfoundry:ConversationService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "NLUKey": {
     "searchPatterns": [
       "cloudfoundry:NLUService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "AutoScalingKey": {
     "searchPatterns": [
       "cloudfoundry:AutoScalingService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "AppIDKey": {
     "searchPatterns": [
       "cloudfoundry:AppIDService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "RedisKey": {
     "searchPatterns": [
       "cloudfoundry:RedisService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "MongoDBKey": {
     "searchPatterns": [
       "cloudfoundry:MongoDBService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "PostgreSQLKey": {
     "searchPatterns": [
       "cloudfoundry:PostgreSQLService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "MySQLKey": {
     "searchPatterns": [
       "cloudfoundry:MySQLService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "DB2Key": {
     "searchPatterns": [
       "cloudfoundry:DB2Service",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "ObjectStorageKey": {
     "searchPatterns": [
       "cloudfoundry:ObjectStorageService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   },
   "WeatherCompanyDataKey": {
     "searchPatterns": [
       "cloudfoundry:WeatherCompanyDataService",
       "env:my-kube-secret-os-credentials",
-      "file:../../Tests/CloudConfigurationTests/config_example.json"
+      "file:Tests/CloudConfigurationTests/config_example.json"
     ]
   }
 }

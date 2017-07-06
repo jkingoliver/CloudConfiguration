@@ -35,24 +35,46 @@ class EnvironmentVariablesTests: XCTestCase {
 
         let jsonString = "{\"name\":\"21a084f4-4eb3-4de4-9834-33bdc7be5df9/d2a85740-da7a-4615-aabf-5bdc35c63618\",\"password\":\"alertnotification-pwd\",\"url\":\"https://ibmnotifybm.mybluemix.net/api/alerts/v1\",\"swaggerui\":\"https://ibmnotifybm.mybluemix.net/docs/alerts/v1\"}"
 
-        // TODO docker compose -- test on linux -- make sure it's invoking `swift test`
-        // Set env var
-        XCTAssertEqual(setenv("KUBE_ENV", jsonString, 1), 0)
+        guard let json = convertToDictionary(text: jsonString),
+            let testUrl         = json["url"] as? String,
+            let testId          = json["name"] as? String,
+            let testPassword    = json["password"] as? String,
+            let testSwaggerUI   = json["swaggerui"] as? String else {
 
-        guard let credentials =  manager.getAlertNotificationCredentials(name: "AlertNotificationEVKey") else {
-            XCTFail("Could not load Alert Notification service credentials.")
-            return
+                XCTFail("Loading test values failure.")
+                return
         }
 
-        // TODO convert jsonString -> json, then test against json.url etc
+        #if os(macOS)
+            // Set environment variable. Does not work in Linux yet due to https://bugs.swift.org/browse/SR-5076
+            XCTAssertEqual(setenv("KUBE_ENV", jsonString, 1), 0)
 
-        XCTAssertEqual(credentials.url, "https://ibmnotifybm.mybluemix.net/api/alerts/v1", "Alert Notification Service URL should match.")
-        XCTAssertEqual(credentials.id, "21a084f4-4eb3-4de4-9834-33bdc7be5df9/d2a85740-da7a-4615-aabf-5bdc35c63618", "Alert Notification Service ID should match.")
-        XCTAssertEqual(credentials.password, "alertnotification-pwd", "Alert Notification Service password should match.")
-        XCTAssertEqual(credentials.swaggerUI, "https://ibmnotifybm.mybluemix.net/docs/alerts/v1", "Alert Notification Service swaggerUI should match.")
+            guard let credentials =  manager.getAlertNotificationCredentials(name: "AlertNotificationEVKey") else {
+                XCTFail("Could not load Alert Notification service credentials.")
+                return
+            }
 
-        // Unset env var
-        XCTAssertEqual(unsetenv("KUBE_ENV"), 0)
+            XCTAssertEqual(credentials.url, testUrl, "Alert Notification Service URL should match.")
+            XCTAssertEqual(credentials.id, testId, "Alert Notification Service ID should match.")
+            XCTAssertEqual(credentials.password, testPassword, "Alert Notification Service password should match.")
+            XCTAssertEqual(credentials.swaggerUI, testSwaggerUI, "Alert Notification Service swaggerUI should match.")
+
+            // Unset env var
+            XCTAssertEqual(unsetenv("KUBE_ENV"), 0)
+        #endif
+
     }
+
+    func convertToDictionary(text: String) -> [String: Any]? {
+        if let data = text.data(using: .utf8) {
+            do {
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        return nil
+    }
+    
 }
 

@@ -73,8 +73,9 @@ public class AppConfiguration {
             case "file":            // File- local or in cloud foundry
                 let instance = (arr.count > 0) ? arr[0] : ""
 
-                if let credentials = getLocalCreds(instance: instance, path: value) {
-                    return credentials
+                if let credentials = getLocalCreds(instance: instance, path: value),
+                    credentials.count > 0 {
+                        return credentials
                 }
                 break
             default:
@@ -125,29 +126,24 @@ public class AppConfiguration {
             fileManager.load(file: fileName, relativeFrom: .pwd)
         }
 
-        var credentials: [String: Any]?
-
         if instance == "" {
-            credentials = (fileManager.getConfigs() as? [String: Any])
+            return (fileManager.getConfigs() as? [String: Any])
         }
         else {
-            credentials = fileManager["\(instance)"] as? [String: Any]
+            return fileManager["\(instance)"] as? [String: Any]
         }
-        return credentials
     }
 
     // Used internally for testing purposes
     internal func loadCFTestConfigs(path: String) {
 
         cloudFoundryManager.load(file: path, relativeFrom: .project)
-        
     }
 
     // Used internally for testing purposes
     internal func loadMappingTestConfigs(path: String) {
 
         mapManager.load(file: path, relativeFrom: .project)
-
     }
 }
 
